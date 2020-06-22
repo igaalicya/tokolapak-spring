@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cimb.tokolapak.dao.DepartmentRepo;
 import com.cimb.tokolapak.dao.EmployeeAddressRepo;
 import com.cimb.tokolapak.dao.EmployeeRepo;
+import com.cimb.tokolapak.dao.ProjectRepo;
 import com.cimb.tokolapak.entity.Department;
 import com.cimb.tokolapak.entity.Employee;
 import com.cimb.tokolapak.entity.EmployeeAddress;
+import com.cimb.tokolapak.entity.Project;
 import com.cimb.tokolapak.service.EmployeeService;
+import com.cimb.tokolapak.util.EmailUtil;
 
 @RestController
 @RequestMapping("/employee")
@@ -39,10 +42,16 @@ public class EmployeeController {
 	@Autowired
 	private DepartmentRepo departmentRepo;
 	
-	@PostMapping
-	public Employee addEmployee(@RequestBody Employee employee) {
-		return employeeRepo.save(employee);
-	}
+	@Autowired
+	private ProjectRepo projectRepo;
+	
+	@Autowired
+	private EmailUtil emailUtil;
+	
+//	@PostMapping
+//	public Employee addEmployee(@RequestBody Employee employee) {
+//		return employeeRepo.save(employee);
+//	}
 	
 	@GetMapping
 	public Iterable<Employee> getEmployees(){
@@ -82,7 +91,8 @@ public class EmployeeController {
 			throw new RuntimeException("Department not found");
 
 		employee.setDepartment(findDepartment);
-
+		emailUtil.sendEmail(employee.getEmail(), "Registrasi Email Karyawan", "<h1>Selamat</h1>");
+		
 		return employeeRepo.save(employee);
 	}
 	
@@ -111,5 +121,14 @@ public class EmployeeController {
 		// 5. Save employee nya
 	}
 
+	@PostMapping("/{employeeId}/projects/{projectId}")
+	public Employee addProjectToEmployee(@PathVariable int employeeId, @PathVariable int projectId) {
+		Employee findEmployee = employeeRepo.findById(employeeId).get();
+		
+		Project findProject = projectRepo.findById(projectId).get();
 
+		findEmployee.getProjects().add(findProject);
+		
+		return employeeRepo.save(findEmployee);
+	}
 }

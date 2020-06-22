@@ -1,6 +1,6 @@
 package com.cimb.tokolapak.entity;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -22,7 +22,7 @@ public class Department {
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "department", cascade = CascadeType.ALL)
 	@JsonIgnore
-	private Set<Employee> employee;
+	private List<Employee> employee;
 
 	public int getId() {
 		return id;
@@ -40,11 +40,11 @@ public class Department {
 		this.name = name;
 	}
 
-	public Set<Employee> getEmployee() {
+	public List<Employee> getEmployee() {
 		return employee;
 	}
 
-	public void setEmployee(Set<Employee> employee) {
+	public void setEmployee(List<Employee> employee) {
 		this.employee = employee;
 	}
 
