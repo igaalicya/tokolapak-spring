@@ -3,6 +3,7 @@ package com.cimb.tokolapak.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,5 +51,21 @@ public class ProjectController {
 	@PostMapping
 	public Project addProject(@RequestBody Project project) {
 		return projectRepo.save(project);
+	}
+	
+	@DeleteMapping("/{projectId}")
+	public void deleteProject(@PathVariable int projectId) {
+		Project findProject = projectRepo.findById(projectId).get();
+
+		findProject.getEmployees().forEach(employee -> {
+			employee.setProjects(null);
+		});
+
+		findProject.setEmployees(null);
+
+//		System.out.println(findProject.getEmployees());
+
+//		findProject.setEmployees(null);
+		projectRepo.delete(findProject);
 	}
 }
